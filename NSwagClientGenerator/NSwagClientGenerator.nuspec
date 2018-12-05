@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>$authors$</authors>
+    <description>$description$</description>
+  </metadata>
+  <files>
+    <file src="_._" target="lib/net47/" />
+    <file src="NSwagClientGenerator.targets" target="build/net47/NSwagClientGenerator.targets" />
+	  <file src="NSwagClientGeneratorAutoRun.targets" target="tools/" />
+    <file src="$publishdir$\net47\**\*" target="tools/net47/" />
+  </files>
+</package>
