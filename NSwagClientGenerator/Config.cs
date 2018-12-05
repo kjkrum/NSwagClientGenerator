@@ -19,7 +19,7 @@ namespace NSwagClientGenerator
 					OperationNameGenerator = new SingleClientFromOperationIdOperationNameGenerator()
 				}
 			};
-			config.Settings.CSharpGeneratorSettings.Namespace = "Generated";
+			config.Settings.CSharpGeneratorSettings.Namespace = Generator.DEFAULT_NAMESPACE;
 			return config;
 		}
 	}

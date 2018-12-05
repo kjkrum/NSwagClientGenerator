@@ -11,6 +11,7 @@ namespace NSwagClientGenerator
 {
 	public class Generator
 	{
+		public const string DEFAULT_NAMESPACE = "Generated";
 		private const string CONFIG = "NSwagClientGeneratorConfig";
 		private const string OUTPUT = "NSwagClientGeneratorOutput";
 
@@ -81,12 +82,12 @@ namespace NSwagClientGenerator
 			{
 				foreach(var service in api.Services)
 				{
-					var json = client.GetStringAsync(api.BasePath + service).GetAwaiter().GetResult();
+					var json = client.GetStringAsync(string.Format(api.Url, service)).GetAwaiter().GetResult();
 					var doc = SwaggerDocument.FromJsonAsync(json).GetAwaiter().GetResult();
 					var settings = Clone(Config.Settings);
 					settings.ClassName = service.Replace(".", "");
 					settings.CSharpGeneratorSettings.Namespace =
-						(string.IsNullOrWhiteSpace(api.Namespace) ? string.IsNullOrWhiteSpace(settings.CSharpGeneratorSettings.Namespace) ? "Generated" : settings.CSharpGeneratorSettings.Namespace : api.Namespace)
+						(string.IsNullOrWhiteSpace(api.Namespace) ? string.IsNullOrWhiteSpace(settings.CSharpGeneratorSettings.Namespace) ? DEFAULT_NAMESPACE : settings.CSharpGeneratorSettings.Namespace : api.Namespace)
 						+ "." + service;
 					var gen = new SwaggerToCSharpClientGenerator(doc, settings);
 					var code = gen.GenerateFile();
