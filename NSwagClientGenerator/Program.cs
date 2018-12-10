@@ -9,12 +9,12 @@ namespace NSwagClientGenerator
 		{
 			try
 			{
-				if (args.Length != 1)
+				if (args.Length != 2)
 				{
 					var exe = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-					throw new Exception("Usage: " + exe + " <project-file>");
+					throw new Exception("Usage: " + exe + " <config-file> <output-file>");
 				}
-				new Generator(args[0]).Start();
+				new Generator(args[0], args[1]).Start();
 				return 0;
 			}
 			catch (Exception e)

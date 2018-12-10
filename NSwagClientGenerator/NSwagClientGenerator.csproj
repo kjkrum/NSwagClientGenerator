@@ -4,17 +4,16 @@
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net47</TargetFrameworks>
 		<PackageId>NSwagClientGenerator</PackageId>
-		<Version>0.1.9</Version>
+		<Version>0.1.23</Version>
 		<Copyright>Copyright © 2018, TM International</Copyright>
 		<Authors>Kevin Krumwiede</Authors>
 		<Description>Injects generated REST clients into a build.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Build" Version="15.9.20" />
-		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.9.20" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="12.0.4" />
+		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="12.0.5" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 	</ItemGroup>
 
 	<PropertyGroup>

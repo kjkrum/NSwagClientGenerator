@@ -1,12 +1,12 @@
 ﻿<Project>
 	<PropertyGroup>
-		<NSwagClientGeneratorExe Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">&quot;$(MSBuildThisFileDirectory)net47\NSwagClientGenerator.exe&quot;</NSwagClientGeneratorExe>
-		<NSwagClientGeneratorConfig>NSwagClientGenerator.$(Configuration).json</NSwagClientGeneratorConfig>
-		<NSwagClientGeneratorOutput>$(IntermediateOutputPath)NSwagClientGenerator.g.cs</NSwagClientGeneratorOutput>
+		<NSwagClientGeneratorExe Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(MSBuildThisFileDirectory)net47\NSwagClientGenerator.exe</NSwagClientGeneratorExe>
+		<NSwagClientGeneratorConfig>NSwagClientGenerator.&#x0024;(Configuration).json</NSwagClientGeneratorConfig>
+		<NSwagClientGeneratorOutput>&#x0024;(IntermediateOutputPath)NSwagClientGenerator.g.cs</NSwagClientGeneratorOutput>
 	</PropertyGroup>
 	<Target Name="NSwagClientGeneratorGenerate" Inputs="$(NSwagClientGeneratorConfig)" Outputs="$(NSwagClientGeneratorOutput)">
 		<Message Importance="high" Text="NSwagClientGenerator: generating clients for $(Configuration)" />
-		<Exec Command="$(NSwagClientGeneratorExe) &quot;$(MSBuildProjectFile)&quot;" />
+		<Exec Command="$(NSwagClientGeneratorExe) &quot;$(NSwagClientGeneratorConfig)&quot; &quot;$(NSwagClientGeneratorOutput)&quot;" />
 	</Target>
 	<Target Name="NSwagClientGeneratorInclude" BeforeTargets="CoreCompile" DependsOnTargets="NSwagClientGeneratorGenerate">
 		<ItemGroup Condition="Exists($(NSwagClientGeneratorOutput))">

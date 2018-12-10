@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Evaluation;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NSwag;
 using NSwag.CodeGeneration.CSharp;
 using System;
@@ -12,18 +11,17 @@ namespace NSwagClientGenerator
 	public class Generator
 	{
 		public const string DEFAULT_NAMESPACE = "Generated";
-		private const string CONFIG = "NSwagClientGeneratorConfig";
-		private const string OUTPUT = "NSwagClientGeneratorOutput";
 
-		private string ProjectFile { get; }
+		private string ConfigFile { get; }
+		private string OutputFile { get; }
 		private JsonSerializerSettings SerializerSettings { get; }
-		private Project Project { get; set; }
 		private Config Config { get; set; }
 		private StringBuilder Output { get; } = new StringBuilder();
 
-		public Generator(string projectFile)
+		public Generator(string configFile, string outputFile)
 		{
-			ProjectFile = projectFile;
+			ConfigFile = configFile;
+			OutputFile = outputFile;
 			SerializerSettings = new JsonSerializerSettings()
 			{
 				Formatting = Formatting.Indented,
@@ -33,32 +31,27 @@ namespace NSwagClientGenerator
 
 		public void Start()
 		{
-			using(var pc = new ProjectCollection())
+			LoadConfig();
+			ExtractUsings();
+			foreach (var api in Config.Apis.Where(o => o.Services.Count > 0))
 			{
-				Project = pc.LoadProject(ProjectFile);
-				LoadConfig();
-				ExtractUsings();
-				foreach (var api in Config.Apis.Where(o => o.Services.Count > 0))
-				{
-					Generate(api);
-				}
-				WriteOutput();
+				Generate(api);
 			}
+			WriteOutput();
 		}
 
 		private void LoadConfig()
 		{
-			var file = Project.GetPropertyValue(CONFIG);
-			if(File.Exists(file))
+			if(File.Exists(ConfigFile))
 			{
-				var json = File.ReadAllText(file);
+				var json = File.ReadAllText(ConfigFile);
 				Config = JsonConvert.DeserializeObject<Config>(json, SerializerSettings);
 			}
 			else
 			{
 				var config = Config.NewDefault();
 				var json = JsonConvert.SerializeObject(config, SerializerSettings);
-				File.WriteAllText(file, json);
+				File.WriteAllText(ConfigFile, json);
 				throw new Exception("Wrote default config file. Please edit and rebuild.");
 			}
 		}
@@ -98,8 +91,7 @@ namespace NSwagClientGenerator
 
 		private void WriteOutput()
 		{
-			var file = Project.GetPropertyValue(OUTPUT);
-			File.WriteAllText(file, Output.ToString());
+			File.WriteAllText(OutputFile, Output.ToString());
 		}
 
 		private T Clone<T>(T obj)
