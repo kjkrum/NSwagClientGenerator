@@ -16,10 +16,11 @@ namespace NSwagClientGenerator
 				Apis = new List<Api>() { new Api() },
 				Settings = new SwaggerToCSharpClientGeneratorSettings()
 				{
-					OperationNameGenerator = new SingleClientFromOperationIdOperationNameGenerator()
+					OperationNameGenerator = new SingleClientFromOperationIdOperationNameGenerator(),
 				}
 			};
 			config.Settings.CSharpGeneratorSettings.Namespace = Generator.DEFAULT_NAMESPACE;
+			config.Settings.CSharpGeneratorSettings.GenerateDataAnnotations = false;
 			return config;
 		}
 	}
