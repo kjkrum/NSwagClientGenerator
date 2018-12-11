@@ -78,10 +78,11 @@ namespace NSwagClientGenerator
 					var json = client.GetStringAsync(string.Format(api.Url, service)).GetAwaiter().GetResult();
 					var doc = SwaggerDocument.FromJsonAsync(json).GetAwaiter().GetResult();
 					var settings = Clone(Config.Settings);
-					settings.ClassName = service.Replace(".", "");
+					// TODO replace ALL invalid characters
+					settings.ClassName = service.Replace(".", "").Replace("-", "").Replace("_", "");
 					settings.CSharpGeneratorSettings.Namespace =
 						(string.IsNullOrWhiteSpace(api.Namespace) ? string.IsNullOrWhiteSpace(settings.CSharpGeneratorSettings.Namespace) ? DEFAULT_NAMESPACE : settings.CSharpGeneratorSettings.Namespace : api.Namespace)
-						+ "." + service;
+						+ "." + service.Replace("-", "");
 					var gen = new SwaggerToCSharpClientGenerator(doc, settings);
 					var code = gen.GenerateFile();
 					Output.Append(code);
