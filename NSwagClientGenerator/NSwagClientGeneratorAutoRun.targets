@@ -1,7 +1,7 @@
 ﻿<Project>
 	<PropertyGroup>
 		<NSwagClientGeneratorExe Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(MSBuildThisFileDirectory)net47\NSwagClientGenerator.exe</NSwagClientGeneratorExe>
-		<NSwagClientGeneratorConfig>NSwagClientGenerator.&#x0024;(Configuration).json</NSwagClientGeneratorConfig>
+		<NSwagClientGeneratorConfig>NSwagClientGenerator.json</NSwagClientGeneratorConfig>
 		<NSwagClientGeneratorOutput>&#x0024;(IntermediateOutputPath)NSwagClientGenerator.g.cs</NSwagClientGeneratorOutput>
 	</PropertyGroup>
 	<Target Name="NSwagClientGeneratorGenerate" Inputs="$(NSwagClientGeneratorConfig)" Outputs="$(NSwagClientGeneratorOutput)">
