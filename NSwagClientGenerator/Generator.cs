@@ -73,19 +73,19 @@ namespace NSwagClientGenerator
 		{
 			using(var client = api.NewClient())
 			{
-				// TODO allow this to be null?
-				var apiNamespace = string.IsNullOrWhiteSpace(api.Namespace) ?
-					string.IsNullOrWhiteSpace(Config.Settings.CSharpGeneratorSettings.Namespace) ?
-					DEFAULT_NAMESPACE : Config.Settings.CSharpGeneratorSettings.Namespace : api.Namespace;
 				foreach (var serviceName in api.Services)
 				{
 					var docUrl = string.Format(api.ServiceDoc, serviceName);
 					var json = client.GetStringAsync(docUrl).GetAwaiter().GetResult();
 					var doc = SwaggerDocument.FromJsonAsync(json).GetAwaiter().GetResult();
 					var settings = Clone(Config.Settings);
-					// TODO replace ALL invalid characters
+					var nsPrefix = api.Namespace ?? settings.CSharpGeneratorSettings.Namespace ?? DEFAULT_NAMESPACE;
+					// TODO more comprehensive validation of ClassName and Namespace
+					// provide collection of previous results to guarantee uniqueness
+					// see https://stackoverflow.com/a/950651/8773089
+					settings.CSharpGeneratorSettings.Namespace =
+						(nsPrefix.Length == 0 ? nsPrefix : nsPrefix + ".") + serviceName.Replace("-", "");
 					settings.ClassName = serviceName.Replace(".", "").Replace("-", "").Replace("_", "");
-					settings.CSharpGeneratorSettings.Namespace = apiNamespace + "." + serviceName.Replace("-", "");
 					var gen = new SwaggerToCSharpClientGenerator(doc, settings);
 					var code = gen.GenerateFile();
 
@@ -105,8 +105,7 @@ namespace NSwagClientGenerator
 					 */
 					if (settings.UseBaseUrl)
 					{
-						code = code.Replace("BaseUrl.TrimEnd('/')",
-							"BaseUrl.EndsWith(\"/\") ? BaseUrl : BaseUrl + \"/\"");
+						code = code.Replace("BaseUrl.TrimEnd('/')",	"BaseUrl.EndsWith(\"/\") ? BaseUrl : BaseUrl + \"/\"");
 						foreach (var path in doc.Paths.Keys)
 						{
 							code = code.Replace('"' + path + '"', '"' + path.TrimStart('/') + '"');
