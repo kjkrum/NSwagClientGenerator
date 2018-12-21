@@ -136,7 +136,7 @@ namespace NSwagClientGenerator
 								}
 								else
 								{
-									code = code.Replace("'" + doc.BaseUrl + '"', "null");
+									code = code.Replace('"' + doc.BaseUrl + '"', "null");
 								}
 							}
 						}
