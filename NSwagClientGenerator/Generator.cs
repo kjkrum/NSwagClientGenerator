@@ -121,7 +121,8 @@ namespace NSwagClientGenerator
 						var pathSegment = doc.BaseUrl.Substring(api.BaseUrl.Length).Trim('/');
 						if (pathSegment.Length > 0)
 						{
-							/* Change all relative paths to include the path segment. */
+							/* Change relative paths to include the path segment. */
+							code = code.Replace("Append(\"?", "Append(\"" + pathSegment + "?");
 							foreach (var path in doc.Paths.Keys.Select(o => o.TrimStart('/')))
 							{
 								code = code.Replace('"' + path + '"', '"' + pathSegment + '/' + path + '"');

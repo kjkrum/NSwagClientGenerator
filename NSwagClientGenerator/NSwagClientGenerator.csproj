@@ -4,7 +4,7 @@
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net47</TargetFrameworks>
 		<PackageId>NSwagClientGenerator</PackageId>
-		<Version>0.2.0</Version>
+		<Version>0.2.1</Version>
 		<Copyright>Copyright © 2018, TM International</Copyright>
 		<Authors>Kevin Krumwiede</Authors>
 		<Description>Injects generated REST clients into a build.</Description>
