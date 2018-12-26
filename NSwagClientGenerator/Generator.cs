@@ -49,10 +49,10 @@ namespace NSwagClientGenerator
 			}
 			else
 			{
-				var config = Config.NewDefault();
-				var json = JsonConvert.SerializeObject(config, SerializerSettings);
+				Config = Config.NewDefault();
+				var json = JsonConvert.SerializeObject(Config, SerializerSettings);
 				File.WriteAllText(ConfigFile, json);
-				throw new Exception("Wrote default config file. Please edit and rebuild.");
+				Console.Error.WriteLine("Wrote default config file.");
 			}
 		}
 
