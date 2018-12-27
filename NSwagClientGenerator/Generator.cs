@@ -2,6 +2,7 @@
 using NSwag;
 using NSwag.CodeGeneration.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -75,9 +76,34 @@ namespace NSwagClientGenerator
 			{
 				foreach (var serviceName in api.Services)
 				{
+					Console.Error.WriteLine("Generating client for {0}...", serviceName);
 					var docUrl = string.Format(api.ServiceDoc, serviceName);
 					var json = client.GetStringAsync(docUrl).GetAwaiter().GetResult();
 					var doc = SwaggerDocument.FromJsonAsync(json).GetAwaiter().GetResult();
+
+					if(api.BasePath != null)
+					{
+						/* Modify doc paths. The Swagger convention seems to be that
+						 * paths always have leading slashes and no trailing slashes. */
+						var basePath = '/' + api.BasePath.Trim('/');
+						if(doc.BasePath.StartsWith(basePath))
+						{
+							var relPath = doc.BasePath.Substring(basePath.Length);
+							doc.BasePath = basePath;
+							foreach (var docPath in new List<string>(doc.Paths.Keys))
+							{
+								doc.Paths.Add(relPath + docPath, doc.Paths[docPath]);
+								doc.Paths.Remove(docPath);
+							}
+						}
+						else
+						{
+							var msg = string.Format("Document BasePath {0} does not start with configured BasePath {1}.", doc.BasePath, api.BasePath);
+							throw new Exception(msg);
+						}
+					}
+
+					/* Generate code. */
 					var settings = Clone(Config.Settings);
 					var nsPrefix = api.Namespace ?? settings.CSharpGeneratorSettings.Namespace ?? DEFAULT_NAMESPACE;
 					// TODO more comprehensive validation of ClassName and Namespace
@@ -89,57 +115,25 @@ namespace NSwagClientGenerator
 					var gen = new SwaggerToCSharpClientGenerator(doc, settings);
 					var code = gen.GenerateFile();
 
-					/* When UseBaseUrl is true, NSwag generates relative paths with leading
-					 * slashes. This is incompatible with HttpClient.BaseAddress, which only
-					 * works with relative paths that do not begin with a slash. We want to
-					 * fix this even if we're not manipulating the base URL. The generated
-					 * code looks like this:
-					 * 
-					 * urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/methodName");
-					 * 
-					 * Change it to look like this:
-					 * 
-					 * urlBuilder_.Append(BaseUrl != null ? BaseUrl.EndsWith("/") ? BaseUrl : BaseUrl + "/" : "").Append("methodName");
-					 *
-					 * See https://github.com/RSuter/NSwag/issues/1850.
-					 */
-					if (settings.UseBaseUrl)
+					/* If UseBaseUrl is true, NSwag generates relative paths with leading slashes.
+					 * This conflicts with HttpClient, which requires that BaseAddress ends with a
+					 * slash and relative paths do not begin with slashes. */
+					if(settings.UseBaseUrl)
 					{
-						code = code.Replace("BaseUrl.TrimEnd('/')",	"BaseUrl.EndsWith(\"/\") ? BaseUrl : BaseUrl + \"/\"");
-						foreach (var path in doc.Paths.Keys)
+						code = code.Replace("Append(\"/", "Append(\"");
+						if(settings.GenerateBaseUrlProperty)
 						{
-							code = code.Replace('"' + path + '"', '"' + path.TrimStart('/') + '"');
+							/* Instead of removing the trailing slash from BaseUrl, require it. */
+							code = code.Replace("BaseUrl.TrimEnd('/')", "BaseUrl.EndsWith(\"/\") ? BaseUrl : BaseUrl + \"/\"");
+							if(!api.KeepBaseUrl)
+							{
+								code = code.Replace("_baseUrl = \"", "_baseUrl = \"\"; // ");
+							}
 						}
-					}
-
-					/* NSwag uses the longest common prefix of the method URLs as the
-					 * base URL, and the relative URLs are only the parts that differ.
-					 * We want to control where the URLs are split between base and
-					 * relative path. */
-					if (!string.IsNullOrEmpty(api.BaseUrl) && doc.BaseUrl.StartsWith(api.BaseUrl))
-					{
-						var pathSegment = doc.BaseUrl.Substring(api.BaseUrl.Length).Trim('/');
-						if (pathSegment.Length > 0)
+						else
 						{
-							/* Change relative paths to include the path segment. */
-							code = code.Replace("Append(\"?", "Append(\"" + pathSegment + "?");
-							foreach (var path in doc.Paths.Keys.Select(o => o.TrimStart('/')))
-							{
-								code = code.Replace('"' + path + '"', '"' + pathSegment + '/' + path + '"');
-							}
-
-							/* Remove the path segment from the base URL. */
-							if (settings.UseBaseUrl)
-							{
-								if (api.KeepBaseUrl)
-								{
-									code = code.Replace(doc.BaseUrl, api.BaseUrl);
-								}
-								else
-								{
-									code = code.Replace('"' + doc.BaseUrl + '"', "null");
-								}
-							}
+							/* Remove code referencing non-existent property. */
+							code = code.Replace(".Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : \"\")", "");
 						}
 					}
 

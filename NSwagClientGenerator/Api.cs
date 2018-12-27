@@ -10,7 +10,7 @@ namespace NSwagClientGenerator
 		public string ServiceDoc { get; set; } = "http://example.com/api/{0}";
 		public List<string> Services { get; set; } = new List<string>();
 		public string Namespace { get; set; }
-		public string BaseUrl { get; set; }
+		public string BasePath { get; set; }
 		public bool KeepBaseUrl { get; set; }
 		public string UserName { get; set; }
 		public string Password { get; set; }
