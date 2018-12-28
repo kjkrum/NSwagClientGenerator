@@ -83,24 +83,7 @@ namespace NSwagClientGenerator
 
 					if(api.BasePath != null)
 					{
-						/* Modify doc paths. The Swagger convention seems to be that
-						 * paths always have leading slashes and no trailing slashes. */
-						var basePath = '/' + api.BasePath.Trim('/');
-						if(doc.BasePath.StartsWith(basePath))
-						{
-							var relPath = doc.BasePath.Substring(basePath.Length);
-							doc.BasePath = basePath;
-							foreach (var docPath in new List<string>(doc.Paths.Keys))
-							{
-								doc.Paths.Add(relPath + docPath, doc.Paths[docPath]);
-								doc.Paths.Remove(docPath);
-							}
-						}
-						else
-						{
-							var msg = string.Format("Document BasePath {0} does not start with configured BasePath {1}.", doc.BasePath, api.BasePath);
-							throw new Exception(msg);
-						}
+						doc.SetBasePath(api.BasePath);
 					}
 
 					/* Generate code. */
@@ -127,7 +110,7 @@ namespace NSwagClientGenerator
 							code = code.Replace("BaseUrl.TrimEnd('/')", "BaseUrl.EndsWith(\"/\") ? BaseUrl : BaseUrl + \"/\"");
 							if(!api.KeepBaseUrl)
 							{
-								code = code.Replace("_baseUrl = \"", "_baseUrl = \"\"; // ");
+								code = code.Replace("_baseUrl = \"", "_baseUrl = null; // \"");
 							}
 						}
 						else
