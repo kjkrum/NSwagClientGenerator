@@ -18,7 +18,8 @@ namespace NSwagClientGenerator
 				{
 					OperationNameGenerator = new SingleClientFromOperationIdOperationNameGenerator(),
 					UseBaseUrl = false,
-					GenerateBaseUrlProperty = false
+					GenerateBaseUrlProperty = false,
+					DisposeHttpClient = false
 				}
 			};
 			config.Settings.CSharpGeneratorSettings.Namespace = Generator.DEFAULT_NAMESPACE;
