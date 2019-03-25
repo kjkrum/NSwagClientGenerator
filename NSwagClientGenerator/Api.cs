@@ -16,6 +16,7 @@ namespace NSwagClientGenerator
 		public string Password { get; set; }
 		public string BearerToken { get; set; }
 		public bool IgnoreInvalidCert { get; set; }
+		public bool ConvertNumbersToDecimal { get; set; }
 
 		public HttpClient NewClient()
 		{

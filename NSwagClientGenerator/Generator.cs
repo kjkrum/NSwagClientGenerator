@@ -2,7 +2,6 @@
 using NSwag;
 using NSwag.CodeGeneration.CSharp;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,7 +14,8 @@ namespace NSwagClientGenerator
 
 		private string ConfigFile { get; }
 		private string OutputFile { get; }
-		private JsonSerializerSettings SerializerSettings { get; }
+		private JsonSerializerSettings JsonSerializerSettings { get; }
+		private NumberFormatVisitor NumberFormatVisitor { get; } = new NumberFormatVisitor();
 		private Config Config { get; set; }
 		private StringBuilder Output { get; } = new StringBuilder();
 
@@ -23,7 +23,7 @@ namespace NSwagClientGenerator
 		{
 			ConfigFile = configFile;
 			OutputFile = outputFile;
-			SerializerSettings = new JsonSerializerSettings()
+			JsonSerializerSettings = new JsonSerializerSettings()
 			{
 				Formatting = Formatting.Indented,
 				TypeNameHandling = TypeNameHandling.Auto
@@ -46,12 +46,12 @@ namespace NSwagClientGenerator
 			if(File.Exists(ConfigFile))
 			{
 				var json = File.ReadAllText(ConfigFile);
-				Config = JsonConvert.DeserializeObject<Config>(json, SerializerSettings);
+				Config = JsonConvert.DeserializeObject<Config>(json, JsonSerializerSettings);
 			}
 			else
 			{
 				Config = Config.NewDefault();
-				var json = JsonConvert.SerializeObject(Config, SerializerSettings);
+				var json = JsonConvert.SerializeObject(Config, JsonSerializerSettings);
 				File.WriteAllText(ConfigFile, json);
 				Console.Error.WriteLine("Wrote default config file.");
 			}
@@ -80,6 +80,11 @@ namespace NSwagClientGenerator
 					var docUrl = string.Format(api.ServiceDoc, serviceName);
 					var json = client.GetStringAsync(docUrl).GetAwaiter().GetResult();
 					var doc = SwaggerDocument.FromJsonAsync(json).GetAwaiter().GetResult();
+
+					if(api.ConvertNumbersToDecimal)
+					{
+						NumberFormatVisitor.VisitAsync(doc).GetAwaiter().GetResult();
+					}
 
 					if(api.BasePath != null)
 					{
@@ -133,7 +138,7 @@ namespace NSwagClientGenerator
 
 		private T Clone<T>(T obj)
 		{
-			return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj, SerializerSettings), SerializerSettings);
+			return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj, JsonSerializerSettings), JsonSerializerSettings);
 		}
 	}
 }
