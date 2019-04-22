@@ -5,7 +5,7 @@
 		<NSwagClientGeneratorOutput>&#x0024;(IntermediateOutputPath)NSwagClientGenerator.g.cs</NSwagClientGeneratorOutput>
 	</PropertyGroup>
 	<Target Name="NSwagClientGeneratorGenerate" Inputs="$(NSwagClientGeneratorConfig)" Outputs="$(NSwagClientGeneratorOutput)">
-		<Exec Command="$(NSwagClientGeneratorExe) &quot;$(NSwagClientGeneratorConfig)&quot; &quot;$(NSwagClientGeneratorOutput)&quot;" />
+		<Exec Command="&quot;$(NSwagClientGeneratorExe)&quot; &quot;$(NSwagClientGeneratorConfig)&quot; &quot;$(NSwagClientGeneratorOutput)&quot;" />
 	</Target>
 	<Target Name="NSwagClientGeneratorInclude" BeforeTargets="CoreCompile" DependsOnTargets="NSwagClientGeneratorGenerate">
 		<ItemGroup Condition="Exists($(NSwagClientGeneratorOutput))">

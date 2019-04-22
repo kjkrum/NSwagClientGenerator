@@ -27,6 +27,7 @@ This generator is designed for ease of use and rapid iteration. When you add the
 * `Password`: The password used to access `ServiceDoc`. Does not appear in generated code.
 * `BearerToken`: Alternative to `UserName` and `Password`. Does not appear in generated code.
 * `IgnoreInvalidCert`: Ignore invalid SSL certificate on the server hosting `ServiceDoc`.
+* `ConvertNumbersToDecimal`: Use `decimal` for numeric properties and parameters. See [NSwag #1814](https://github.com/RSuter/NSwag/issues/1814).
 
 The remainder of the config file gives you complete control over the NSwag generator settings. Clients are only regenerated if you modify the config file or do a full rebuild.
 
