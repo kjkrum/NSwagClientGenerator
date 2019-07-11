@@ -7,9 +7,15 @@
     <description>$description$</description>
   </metadata>
   <files>
+    <!-- common -->
+    <file src="NSwagClientGeneratorAutoRun.targets" target="tools/" />
+    <!-- net47 -->
     <file src="_._" target="lib/net47/" />
     <file src="NSwagClientGenerator.targets" target="build/net47/NSwagClientGenerator.targets" />
-	  <file src="NSwagClientGeneratorAutoRun.targets" target="tools/" />
     <file src="$publishdir$\net47\**\*" target="tools/net47/" />
+    <!-- netcoreapp2.1 -->
+    <file src="_._" target="lib/netcoreapp2.1/" />
+    <file src="NSwagClientGenerator.targets" target="build/netcoreapp2.1/NSwagClientGenerator.targets" />
+    <file src="$publishdir$\netcoreapp2.1\**\*" target="tools/netcoreapp2.1/" />
   </files>
 </package>
