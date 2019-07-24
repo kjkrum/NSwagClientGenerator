@@ -17,5 +17,9 @@
     <file src="_._" target="lib/netcoreapp2.1/" />
     <file src="NSwagClientGenerator.targets" target="build/netcoreapp2.1/NSwagClientGenerator.targets" />
     <file src="$publishdir$\netcoreapp2.1\**\*" target="tools/netcoreapp2.1/" />
+    <!-- netcoreapp2.2 -->
+    <file src="_._" target="lib/netcoreapp2.2/" />
+    <file src="NSwagClientGenerator.targets" target="build/netcoreapp2.2/NSwagClientGenerator.targets" />
+    <file src="$publishdir$\netcoreapp2.2\**\*" target="tools/netcoreapp2.2/" />
   </files>
 </package>

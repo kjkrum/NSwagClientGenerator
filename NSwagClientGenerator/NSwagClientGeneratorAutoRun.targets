@@ -1,5 +1,6 @@
 ﻿<Project>
 	<PropertyGroup>
+    <!-- TODO can we just use the net47 version of the generator regardless of the target framework? -->
     <NSwagClientGeneratorExe Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(MSBuildThisFileDirectory)$(TargetFramework)\NSwagClientGenerator.exe</NSwagClientGeneratorExe>
     <NSwagClientGeneratorExe Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">dotnet" "$(MSBuildThisFileDirectory)$(TargetFramework)\NSwagClientGenerator.dll</NSwagClientGeneratorExe>
     <NSwagClientGeneratorConfig>NSwagClientGenerator.json</NSwagClientGeneratorConfig>
