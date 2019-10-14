@@ -16,6 +16,7 @@ namespace NSwagClientGenerator
 		private string OutputFile { get; }
 		private JsonSerializerSettings JsonSerializerSettings { get; }
 		private NumberFormatVisitor NumberFormatVisitor { get; } = new NumberFormatVisitor();
+        private RequiredVisitor RequiredVisitor { get; } = new RequiredVisitor();
 		private Config Config { get; set; }
 		private StringBuilder Output { get; } = new StringBuilder();
 
@@ -85,6 +86,11 @@ namespace NSwagClientGenerator
 					{
 						NumberFormatVisitor.VisitAsync(doc).GetAwaiter().GetResult();
 					}
+
+                    if(api.IgnoreRequired)
+                    {
+                        RequiredVisitor.VisitAsync(doc).GetAwaiter().GetResult();
+                    }
 
 					if(api.BasePath != null)
 					{

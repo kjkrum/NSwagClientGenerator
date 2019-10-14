@@ -28,6 +28,7 @@ This generator is designed for ease of use and rapid iteration. When you add the
 * `BearerToken`: Alternative to `UserName` and `Password`. Does not appear in generated code.
 * `IgnoreInvalidCert`: Ignore invalid SSL certificate on the server hosting `ServiceDoc`.
 * `ConvertNumbersToDecimal`: Use `decimal` for numeric properties and parameters. See [NSwag #1814](https://github.com/RSuter/NSwag/issues/1814).
+* `IgnoreRequired`: Clears the "required" section of the API spec. This is a hack to allow consuming APIs that lie about the nullability of their properties.
 
 The remainder of the config file gives you complete control over the NSwag generator settings. Clients are only regenerated if you modify the config file or do a full rebuild.
 
