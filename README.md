@@ -17,7 +17,7 @@ This generator is designed for ease of use and rapid iteration. When you add the
 	"IgnoreInvalidCert": true
 }
 ```
-**API Config Quick Reference**
+## API Config Quick Reference
 * `ServiceDoc`: The URL of the API's Swagger documents. `{0}` will be replaced by each of the clients named in `Services`.
 * `Services`: A list of services you want to generate clients for.
 * `Namespace`: The client namespace prefix. Each client is generated into its own namespace to avoid collisions between generated types.
@@ -28,8 +28,15 @@ This generator is designed for ease of use and rapid iteration. When you add the
 * `BearerToken`: Alternative to `UserName` and `Password`. Does not appear in generated code.
 * `IgnoreInvalidCert`: Ignore invalid SSL certificate on the server hosting `ServiceDoc`.
 * `ConvertNumbersToDecimal`: Use `decimal` for numeric properties and parameters. See [NSwag #1814](https://github.com/RSuter/NSwag/issues/1814).
-* `IgnoreRequired`: Clears the "required" section of the API spec. This is a hack to allow consuming APIs that lie about the nullability of their properties.
+* `IgnoreRequired`: Clears the "required" section of the API spec. See below for an explanation.
 
 The remainder of the config file gives you complete control over the NSwag generator settings. Clients are only regenerated if you modify the config file or do a full rebuild.
 
 I've used this to generate clients for the Epicor ERP and Magento REST APIs. Please let me know if it works for you!
+
+## Swagger 2.0 and Nullability
+
+Swagger 2.0 has no way to express nullability. Strictly speaking, this means that properties cannot be null. This is obviously a major limitation, and implementors have worked around it in various ways.
+
+NSwag treats Swagger 2.0 properties as nullable if and only if they are not declared as required. But some APIs just ignore the nullability issue and send null values for required properties. NSwag will happily generate clients for these APIs, but the clients will explode at runtime when they encounter null values. The `IgnoreRequired` option is a hack to force these APIs to conform to NSwag's hack. The only solution that isn't a hack is for these APIs to upgrade their specs to OpenAPI 3.0.
+ 
