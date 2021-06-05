@@ -3,7 +3,10 @@ Inject NSwag REST clients directly into your .NET project build. Code is generat
 
 As suggested by the 0.x version number, this project is still in development. However, I've been using 0.3.x in production and it's working well. I'm releasing it for public comment before calling it 1.0 and publishing it to NuGet.org. Meanwhile, you'll need to build and publish it to [your own NuGet feed](https://docs.microsoft.com/en-us/nuget/hosting-packages/local-feeds).
 
-This generator is designed for ease of use and rapid iteration. When you add the NuGet package to your project, it creates a default config file. Edit the `Apis` section according to your needs. It will look something like this:
+## Design Philosophy
+The design of this tool was driven by Epicor ERP. The REST API for a typical ecommerce platform might have half a dozen endpoints for orders, customers, etc. You could easily generate clients for the endpoints you need by downloading the Swagger docs and creating NSwagStudio projects for them. By contrast, Epicor 10 has over 1,700 endpoints. My most complex integrations only used about 2% of Epicor's API surface, but that's still a lot of NSwagStudio projects to set up and maintain by hand. Furthermore, every custom BAQ has its own endpoint, and changes to User Defined Fields are immediately reflected in Business Object endpoints. While you might want to generate a client for a specific version of an ecommerce API, none of Epicor's APIs are versioned in any meaningful way. There is only your company's installation as it exists at the moment you build a client for it. That's why this tool fetches the Swagger docs for you and treats them as build artifacts that don't belong in source control. It's designed for rapid iteration when customizing Epicor or developing integrations for previously unused parts of its enormous API.
+
+When you add the NuGet package to your project, it creates a default config file. Edit the `Apis` section according to your needs. It will look something like this:
 
 ```json
 {
@@ -32,11 +35,9 @@ This generator is designed for ease of use and rapid iteration. When you add the
 
 The remainder of the config file gives you complete control over the NSwag generator settings. Clients are only regenerated if you modify the config file or do a full rebuild.
 
-I've used this to generate clients for the Epicor ERP and Magento REST APIs. Please let me know if it works for you!
-
 ## Swagger 2.0 and Nullability
 
 Swagger 2.0 has no way to express nullability. Strictly speaking, this means that properties cannot be null. This is obviously a major limitation, and implementors have worked around it in various ways.
 
-NSwag treats Swagger 2.0 properties as nullable if and only if they are not declared as required. But some APIs just ignore the nullability issue and send null values for required properties. NSwag will happily generate clients for these APIs, but the clients will explode at runtime when they encounter null values. The `IgnoreRequired` option is a hack to force these APIs to conform to NSwag's hack. The only solution that isn't a hack is for these APIs to upgrade their specs to OpenAPI 3.0.
+NSwag treats Swagger 2.0 properties as nullable if and only if they are not declared as required. But some APIs, including Epicor's, just ignore the nullability issue and send null values for required properties. NSwag will happily generate clients for these APIs, but the clients will explode at runtime when they encounter null values. The `IgnoreRequired` option is a hack to force these APIs to conform to NSwag's hack. The only solution that isn't a hack is for these APIs to upgrade their specs to OpenAPI 3.0.
  
